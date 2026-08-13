@@ -223,11 +223,11 @@ def animate_state(c_n, label, m=1.0, hbar=1.0, omega=1.0,
 # ----------------------------------------------------------------------
 # Numerical verification of the three required checks (no display needed)
 # ----------------------------------------------------------------------
-def verify_checks(m=1.0, hbar=1.0, omega=1.0):
+def verify_checks(m=1.0, hbar=1.0, omega=1.0, eigenstate_n=3):
     x = np.linspace(-10, 10, 2000)
 
     # ---- Check (A): pure eigenstate -> rho(x,t) must be time-independent ----
-    n0 = 3
+    n0 = eigenstate_n
     c = eigenstate_coeffs(n0, n_max=n0)
     t_array = np.linspace(0, 4 * np.pi / omega, 15)
     Psi = evolve_wavefunction(c, x, t_array, m, hbar, omega)
@@ -266,16 +266,17 @@ def verify_checks(m=1.0, hbar=1.0, omega=1.0):
 
 
 if __name__ == "__main__":
+    eigenstate_n = 0
+
     # Run the three required numerical checks
-    verify_checks()
+    verify_checks(eigenstate_n=eigenstate_n)
 
     # Build the three requested animations and save them as GIFs
-    n_max_eigen = 3
     animate_state(
-        eigenstate_coeffs(3, n_max_eigen),
-        label="Check (A): pure eigenstate |n=3> (should look frozen)",
+        eigenstate_coeffs(eigenstate_n, eigenstate_n),
+        label=f"Check (A): pure eigenstate |n={eigenstate_n}> (should look frozen)",
         n_periods=1,
-        save_path="./Chapter2/images/check_A_eigenstate.gif",
+        save_path=f"./Chapter2/images/check_A_eigenstate_n{eigenstate_n}.gif",
     )
 
     animate_state(
