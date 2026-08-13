@@ -63,6 +63,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from math import factorial
+from pathlib import Path
 
 
 # ----------------------------------------------------------------------
@@ -212,6 +213,7 @@ def animate_state(c_n, label, m=1.0, hbar=1.0, omega=1.0,
     )
 
     if save_path is not None:
+        Path(save_path).parent.mkdir(parents=True, exist_ok=True)
         anim.save(save_path, writer="pillow", fps=25)
         print(f"Saved animation to {save_path}")
 
@@ -273,19 +275,19 @@ if __name__ == "__main__":
         eigenstate_coeffs(3, n_max_eigen),
         label="Check (A): pure eigenstate |n=3> (should look frozen)",
         n_periods=1,
-        save_path="/mnt/user-data/outputs/check_A_eigenstate.gif",
+        save_path="./Chapter2/images/check_A_eigenstate.gif",
     )
 
     animate_state(
         classical_like_coeffs(5),
         label="Check (B): (|0>+|1>)/sqrt(2), Problem 2.19 -- classical-like oscillation",
         n_periods=2,
-        save_path="/mnt/user-data/outputs/check_B_classical_combo.gif",
+        save_path="./Chapter2/images/check_B_classical_combo.gif",
     )
 
     animate_state(
         coherent_state_coeffs(3.0 + 0.0j, 40),
         label="Check (C): coherent state |lambda=3>, Problem 2.21 -- rigid oscillation",
         n_periods=2,
-        save_path="/mnt/user-data/outputs/check_C_coherent_state.gif",
+        save_path="./Chapter2/images/check_C_coherent_state.gif",
     )
