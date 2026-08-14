@@ -266,7 +266,7 @@ def verify_checks(m=1.0, hbar=1.0, omega=1.0, eigenstate_n=3):
 
 
 if __name__ == "__main__":
-    eigenstate_n = 0
+    eigenstate_n = 4
 
     # Run the three required numerical checks
     verify_checks(eigenstate_n=eigenstate_n)
