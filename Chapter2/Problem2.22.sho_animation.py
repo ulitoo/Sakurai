@@ -170,7 +170,7 @@ def coherent_state_coeffs(lam, n_max):
 # ----------------------------------------------------------------------
 def animate_state(c_n, label, m=1.0, hbar=1.0, omega=1.0,
                    x_range=8.0, n_x=600, n_frames=120, n_periods=2,
-                   save_path=None):
+                   save_path=None, show_x_expectation=False):
     """
     Build and (optionally) save an animation of Re[Psi(x,t)] and rho(x,t)=|Psi|^2
     side by side, over n_periods classical periods T = 2*pi/omega.
@@ -182,6 +182,7 @@ def animate_state(c_n, label, m=1.0, hbar=1.0, omega=1.0,
 
     Psi = evolve_wavefunction(c_n, x, t_array, m=m, hbar=hbar, omega=omega)
     rho = np.abs(Psi) ** 2
+    x_expect = np.trapezoid(rho * x[None, :], x=x, axis=1)
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.5))
     fig.suptitle(label)
@@ -200,13 +201,28 @@ def animate_state(c_n, label, m=1.0, hbar=1.0, omega=1.0,
     ax2.set_ylabel(r"$|\Psi(x,t)|^2$")
     ax2.set_title("Probability density")
 
+    expectation_line = None
+    expectation_text = None
+    if show_x_expectation:
+        expectation_line = ax2.axvline(
+            x_expect[0], color="black", linestyle="--", lw=1.5,
+            label=r"$\langle x \rangle$",
+        )
+        expectation_text = ax2.text(0.02, 0.92, "", transform=ax2.transAxes)
+        ax2.legend(loc="upper right")
+
     time_text = ax1.text(0.02, 0.92, "", transform=ax1.transAxes)
 
     def update(frame):
         line1.set_ydata(Psi[frame].real)
         line2.set_ydata(rho[frame])
         time_text.set_text(f"t = {t_array[frame]:.2f} (t/T = {t_array[frame]/T:.2f})")
-        return line1, line2, time_text
+        artists = [line1, line2, time_text]
+        if expectation_line is not None:
+            expectation_line.set_xdata([x_expect[frame], x_expect[frame]])
+            expectation_text.set_text(rf"$\langle x \rangle = {x_expect[frame]:.3f}$")
+            artists.extend([expectation_line, expectation_text])
+        return artists
 
     anim = animation.FuncAnimation(
         fig, update, frames=n_frames, interval=40, blit=True
@@ -284,6 +300,7 @@ if __name__ == "__main__":
         label="Check (B): (|0>+|1>)/sqrt(2), Problem 2.19 -- classical-like oscillation",
         n_periods=2,
         save_path="./Chapter2/images/check_B_classical_combo.gif",
+        show_x_expectation=True,
     )
 
     animate_state(
